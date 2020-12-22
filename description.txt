@@ -1,0 +1,4 @@
+A TV show recommendation software.
+
+Each node is a TV show, limited to only TV shows in the genres that the user has previously listed.
+
