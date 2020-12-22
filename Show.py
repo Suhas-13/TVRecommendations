@@ -2,15 +2,19 @@ API_KEY = open("credentials.txt").read()
 import requests
 from collections import Counter as mset
 
-MAX_RECOMMENDATIONS = 5
+
 class Show:
     def __init__(self, show_name = None, properties = None):
         self.show_name = show_name
         self.processed=False
         self.recommendations = None
+        self.similar = None
+        self.found = False
         self.key_words = None
         if (properties):
             self.properties = properties
+            self.found = True
+            self.processed=True
             self.show_name = properties["name"]
         else:
             data = requests.get("https://api.themoviedb.org/3/search/tv?api_key=" + API_KEY + "&language=en-US&page=1&query=" + show_name + "&include_adult=true")
@@ -22,7 +26,7 @@ class Show:
             else:
                 self.found = False
 
-    def get_recommendations(self):
+    def get_recommendations(self, max_recommendations):
         if (self.recommendations):
             return self.recommendations
         else:
@@ -33,9 +37,27 @@ class Show:
                 count = 0
                 for result in data["results"]:
                     self.recommendations.append(Show(properties = result))
-                    if (count >= MAX_RECOMMENDATIONS):
+                    if (count >= max_recommendations):
                         break
+                    count+=1
                 return self.recommendations
+            else:
+                return []
+    def get_similar_shows(self, max_similar):
+        if (self.similar):
+            return self.similar
+        else:
+            if self.processed and self.properties["id"]:
+                data = requests.get("https://api.themoviedb.org/3/tv/" + str(self.properties["id"]) + "/similar?api_key=" + API_KEY + "&language=en-US&page=1")
+                data = data.json()
+                self.similar = []
+                count = 0
+                for result in data["results"]:
+                    self.similar.append(Show(properties = result))
+                    if (count >= max_similar):
+                        break
+                    count+=1
+                return self.similar
             else:
                 return []
     def get_keywords(self):
@@ -46,11 +68,8 @@ class Show:
                 data = requests.get("https://api.themoviedb.org/3/tv/" + str(self.properties["id"]) + "/keywords?api_key=" + API_KEY + "&language=en-US&page=1")
                 data = data.json()
                 self.key_words = mset()
-                count = 0
                 for result in data["results"]:
                     self.key_words.update({result['name']})
-                    if (count >= MAX_RECOMMENDATIONS):
-                        break
                 return self.key_words
             else:
                 return mset()
