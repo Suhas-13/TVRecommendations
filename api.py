@@ -47,7 +47,7 @@ def get_best_recommendations(recommendation_list, show_list, count):
     max_popularity_score = get_highest_popularity()
     show_keyword_set = mset()
     for keyword in show_keywords:
-        show_keyword_set.update({keyword})
+        show_keyword_set.update({keyword:len(recommendation_list)})
     recommendation_scores = [0] * len(recommendation_keywords)
     for recommendation in range(len(recommendation_list)):
         keyword_score = min(0.5,(sum((recommendation_keywords[recommendation] & show_keyword_set).values()) / sum(recommendation_keywords[recommendation].values())) / 2)
@@ -57,16 +57,17 @@ def get_best_recommendations(recommendation_list, show_list, count):
         recommendation_scores[recommendation] = keyword_score + rating_score + rating_count_score + popularity_score
     return_list = []
     i = 0
-    while (i<count):
+    while (i<count and len(recommendation_list) != 0):
         index = recommendation_scores.index(max(recommendation_scores))
-        return_list.append(index)
-        recommendation.pop(index)
+        return_list.append(recommendation_list[index])
+        recommendation_scores.pop(index)
+        recommendation_list.pop(index)
+        i+=1
     return return_list
     
 def process_show_list(show_list):
     shows = []
     show_id_list = []
-
     for show in show_list:
         new_show = Show(show_name = show)
         shows.append(new_show) 
@@ -92,8 +93,7 @@ def process_show_list(show_list):
     recommendation_list = []
     for show in common_list:
         recommendation_list.append(Show(show[0]))
-    get_best_recommendation(recommendation_list, show_list)
-    return (recommendation_list[recommendation_similarity.index(max(recommendation_similarity))].show_name)
+    return get_best_recommendations(recommendation_list, shows, 2)
         
 
         
