@@ -5,6 +5,7 @@ from Show import Show
 from collections import Counter 
 from itertools import chain
 from helper import *
+import math
 import gensim.models.keyedvectors as word2vec
 from collections import Counter as mset
 
@@ -28,7 +29,7 @@ def update_genre_list():
 def get_list_of_recommendations(show_list):
     output_list = []
     for show in show_list:
-        output_list.append(show.get_recommendations(5))
+        output_list.append(show.get_recommendations(4))
     return output_list
 def get_list_of_keywords(show_list):
     output_list = []
@@ -50,9 +51,9 @@ def get_similar_keywords(keyword, count):
 def get_highest_popularity():
     data = requests.get("https://api.themoviedb.org/3/tv/popular?api_key=" + API_KEY + "&language=en-US&page=1").json()
     if len(data["results"]) != 0:
-        return (data["results"][0]["popularity"], data["results"][0]["vote_count"])
+        return (data["results"][0]["popularity"]/1.5, data["results"][0]["vote_count"]/1.5)
     else:
-        return (2000,4000)
+        return (1500,3000)
 def get_best_recommendations(recommendation_list, show_list, count):
     recommendation_keywords = get_list_of_keywords(recommendation_list)
     show_keywords = list(chain.from_iterable(get_list_of_keywords(show_list)))
@@ -70,11 +71,11 @@ def get_best_recommendations(recommendation_list, show_list, count):
     recommendation_scores = [0] * len(recommendation_keywords)
     scores={}
     for recommendation in range(len(recommendation_list)):
-        keyword_score = min(1,(sum((recommendation_keywords[recommendation] & show_keyword_set).values()) / len(recommendation_keywords[recommendation].values())))
-        rating_score = min(1,(recommendation_list[recommendation].properties["vote_average"] / 10))
+        keyword_score = min(1,(sum((recommendation_keywords[recommendation] & show_keyword_set).values()) / sum(recommendation_keywords[recommendation].values())))
+        rating_score = math.sqrt(min(1,(recommendation_list[recommendation].properties["vote_average"] / 10)))
         rating_count_score = min(1, (recommendation_list[recommendation].properties["vote_count"] / max_reviews))
         popularity_score = min(1,((recommendation_list[recommendation].properties["popularity"] / max_popularity_score)))
-        recommendation_scores[recommendation] = (keyword_score * 0.25) + (rating_score*0.5) + (rating_count_score*0.125) + (popularity_score*0.125)
+        recommendation_scores[recommendation] = (keyword_score * 0.5) + (rating_score*0.25) + (rating_count_score*0.125) + (popularity_score*0.125)
         scores[recommendation_list[recommendation].show_name] = {"keyword_score":keyword_score,"rating_score":rating_score,"rating_count_score":rating_count_score,"popularity_score":popularity_score, "actual_score": recommendation_scores[recommendation]}
     return_list = []
     i = 0
@@ -111,7 +112,7 @@ def process_show_list(show_list, count):
             rec_names_not_unique.append(i.properties["name"])
             rec_name_list[i.properties["name"]] = i
     occurence_count = Counter(rec_names_not_unique) 
-    common_list = occurence_count.most_common(10) 
+    common_list = occurence_count.most_common(8) 
     recommendation_list = set()
     original_shows = shows.copy()
     rec_ids = set()
@@ -130,10 +131,5 @@ def process_show_list(show_list, count):
     return get_best_recommendations(list(recommendation_list), list(shows), count)
         
 
-        
-
-            
-        
-    
-    
+def search(query):
     
