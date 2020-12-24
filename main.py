@@ -14,8 +14,10 @@ def popular_shows():
     count = int(request.args.get('count'))
     response = {"response":[]}
     for show in get_popular_shows(count):
-        response['response'].append({"name":show.show_name})
-    return (jsonify(response))
+        response['response'].append({"name":show.show_name, "id":show.properties["id"], "overview": show.properties["overview"], "image_url":"http://image.tmdb.org/t/p/w300_and_h450_bestv2" + str(show.properties["poster_path"])})
+    response = (jsonify(response))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 @app.route('/search')
@@ -23,10 +25,11 @@ def get_search():
     query = str(request.args.get('query'))
     count = int(request.args.get('count'))
     response = {"response":[]}
-    print(query)
     for show in search(query, count):
-        response['response'].append({"name":show.show_name, "id":show.properties["id"], "overview": show.properties["overview"],})
-    return (jsonify(response))
+        response['response'].append({"name":show.show_name, "id":show.properties["id"], "overview": show.properties["overview"], "image_url":"http://image.tmdb.org/t/p/w300_and_h450_bestv2" + str(show.properties["poster_path"])})
+    response = (jsonify(response))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 if __name__ == '__main__':
     app.run('0.0.0.0',debug=True)

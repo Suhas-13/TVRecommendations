@@ -1,5 +1,5 @@
 class Show {
-    constructor(name, id, blurb, image_url) {
+    constructor(name, id, overview, image_url) {
         this.name = name;
         this.id = id;
         this.overview = overview;
@@ -7,3 +7,4 @@ class Show {
     }
     
 }
+export {Show};
