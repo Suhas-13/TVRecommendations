@@ -131,5 +131,24 @@ def process_show_list(show_list, count):
     return get_best_recommendations(list(recommendation_list), list(shows), count)
         
 
-def search(query):
-    
+def search(query, count):
+    data = requests.get("https://api.themoviedb.org/3/search/tv?api_key="+ API_KEY + "&query=" + query + "&include_adult=true").json()
+    show_list = []
+    i = 0
+    for show in data['results']:
+        show_list.append(Show(properties = show))
+        if (i==count-1):
+            break
+        i+=1
+    return show_list
+
+def get_popular_shows(count):
+    data = requests.get("https://api.themoviedb.org/3/tv/popular?api_key=" + API_KEY + "&language=en-US&page=1").json()
+    show_list = []
+    i = 0
+    for show in data['results']:
+        show_list.append(Show(properties = show))
+        if (i==count-1):
+            break
+        i+=1
+    return show_list
