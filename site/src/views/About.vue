@@ -3,10 +3,10 @@
 <template>
   <div class="about flex flex-col items-center">
     <div @click="modal=false" class ="absolute inset-0 z-0"> </div>
-    <input class = "bg-gray-300 px-4 py-2 z-10"  @focus="modal=true" autocomplete = "off" type = "text" v-model="show">
+    <input class = "w-3/12 bg-gray-300 px-4 py-2 z-10"  @focus="modal=true" autocomplete = "off" type = "text" v-model="show">
     <div class ="z-10" v-if ="show_list && modal">
-      <ul class="w-48 bg-gray-800 text-white">
-        <li v-for="(filteredShow, index) in show_list" v-bind:key="index" class="py-2 border-b cursor-pointer" @click = "setShow(filteredShow)">
+      <ul class="w-3/12 bg-gray-800 text-white">
+        <li v-for="(filteredShow, index) in show_list" v-bind:key="index" class="py-2 border-b cursor-pointer" @click = "setShow(show_list[index])">
           <Show v-bind:name="show_list[index].name" v-bind:highlightedName="show_list[index].highlightedName" v-bind:id ="show_list[index].id" v-bind:overview="show_list[index].overview" v-bind:image_url="show_list[index].image_url"></Show>
         </li>
       </ul>
@@ -30,6 +30,7 @@ export default {
   data: function() {
     return {
       show: '',
+      show_id: '',
       modal: false,
       maxResults: 5,
       show_list: [],
@@ -61,7 +62,8 @@ export default {
       }
     },
     setShow(show) {
-      this.show = show;
+      this.show = show.name;
+      this.show_id = show.id;
       this.modal = false;
     }
   },

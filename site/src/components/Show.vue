@@ -1,6 +1,9 @@
 <template>
   <div class="show_item">
-    <span v-if="highlightedName !== null" v-html="highlightedName"></span>
+    <span v-html="outputHtml"></span>
+    <br><br>
+    <span> {{overview}} </span>
+    <img v-bind:src="image_url">
   </div>
 </template>
 
@@ -16,8 +19,22 @@ export default {
     image_url: String
   },
   data: function(){
-      return {}
+      return {max_summary_length: 10}
    },
+  computed: {
+    outputHtml: function() {
+      return this.highlightedName;
+    },
+    shortenedSummary: function() {
+      if (this.overview.split(" ").length > this.max_summary_length) {
+        return this.overview.split(" ").slice(0,10).join(" ") + "...";
+      }
+      else {
+        return this.overview.split(" ").slice(0,10).join(" ");
+      }
+      
+    }
+  }
 }
 </script>
 
