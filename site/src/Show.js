@@ -1,8 +1,9 @@
 class Show {
-    constructor(name, id, overview, image_url) {
+    constructor(name, id, overview, date, image_url) {
         this.name = name;
         this.id = id;
         this.overview = overview;
+        this.publishedDate = date;
         this.image_url = image_url;
         this.highlightedName = name;
     }

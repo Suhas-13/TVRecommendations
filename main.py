@@ -14,7 +14,7 @@ def popular_shows():
     count = int(request.args.get('count'))
     response = {"response":[]}
     for show in get_popular_shows(count):
-        response['response'].append({"name":show.show_name, "id":show.properties["id"], "overview": show.properties["overview"], "image_url":"http://image.tmdb.org/t/p/w300_and_h450_bestv2" + str(show.properties["poster_path"])})
+        response['response'].append({"name":show.show_name, "id":show.properties["id"], "published_date": show.properties["first_air_date"], "overview": show.properties["overview"], "image_url":"http://image.tmdb.org/t/p/w94_and_h141_bestv2" + str(show.properties["poster_path"])})
     response = (jsonify(response))
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
@@ -26,7 +26,7 @@ def get_search():
     count = int(request.args.get('count'))
     response = {"response":[]}
     for show in search(query, count):
-        response['response'].append({"name":show.show_name, "id":show.properties["id"], "overview": show.properties["overview"], "image_url":"http://image.tmdb.org/t/p/w300_and_h450_bestv2" + str(show.properties["poster_path"])})
+        response['response'].append({"name":show.show_name, "id":show.properties["id"], "published_date": show.properties["first_air_date"], "overview": show.properties["overview"], "image_url":"http://image.tmdb.org/t/p/w94_and_h141_bestv2" + str(show.properties["poster_path"])})
     response = (jsonify(response))
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response

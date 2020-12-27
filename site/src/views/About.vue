@@ -3,11 +3,11 @@
 <template>
   <div class="about flex flex-col items-center">
     <div @click="modal=false" class ="absolute inset-0 z-0"> </div>
-    <input class = "w-3/12 bg-gray-300 px-4 py-2 z-10"  @focus="modal=true" autocomplete = "off" type = "text" v-model="show">
-    <div class ="z-10" v-if ="show_list && modal">
-      <ul class="w-3/12 bg-gray-800 text-white">
-        <li v-for="(filteredShow, index) in show_list" v-bind:key="index" class="py-2 border-b cursor-pointer" @click = "setShow(show_list[index])">
-          <Show v-bind:name="show_list[index].name" v-bind:highlightedName="show_list[index].highlightedName" v-bind:id ="show_list[index].id" v-bind:overview="show_list[index].overview" v-bind:image_url="show_list[index].image_url"></Show>
+    <input class = "w-4/12 bg-gray-300 px-4 py-5 z-10"  @focus="modal=true" autocomplete = "off" type = "text" v-model="show">
+    <div class = "px-0 py-0 h-full flex flex-col items-center z-10" v-if ="show_list && modal">
+      <ul class="w-full text-white">
+        <li v-for="(filteredShow, index) in show_list" v-bind:key="index" class="h-full flex flex-col items-center py-1 cursor-pointer" @click = "setShow(show_list[index])">
+          <Show v-bind:name="show_list[index].name" v-bind:publishedDate="show_list[index].publishedDate" v-bind:highlightedName="show_list[index].highlightedName" v-bind:id ="show_list[index].id" v-bind:overview="show_list[index].overview" v-bind:image_url="show_list[index].image_url"></Show>
         </li>
       </ul>
       </div>     

@@ -6,7 +6,7 @@ async function get_popular_shows(count) {
         let output_list = [];
         for (let i=0; i<json_response['response'].length; i++) {
             let show = json_response['response'][i];
-            output_list.push(new Show(show['name'], show['id'], show['overview'], show['image_url']))
+            output_list.push(new Show(show['name'], show['id'], show['overview'], show['published_date'], show['image_url']))
         }
         return output_list;
     }
@@ -21,7 +21,7 @@ async function search(query, count) {
         let output_list = [];
         for (let i=0; i<json_response['response'].length; i++) {
             let show = json_response['response'][i];
-            output_list.push(new Show(show['name'], show['id'], show['overview'], show['image_url']))
+            output_list.push(new Show(show['name'], show['id'], show['overview'], show['published_date'], show['image_url']))
         }
         return output_list;
     }
