@@ -8,12 +8,8 @@
     <div class="w-2/3 p-4">
       <h1 class="text-gray-900 font-bold text-2xl" v-html="outputHtml"></h1>
       <p class="mt-2 text-gray-600 text-sm">{{shortenedSummary}}</p>
-      <div class="flex item-center mt-2">
-      
-      </div>
-      <div class="flex item-center justify-between mt-3">
-        <h1 class="text-sm font-sans" style="color: #999">Published: {{publishedDate}}</h1>
-        <button class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Add to Card</button>
+      <div class="justify-between mt-3">
+        <button style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Mark as watched</button>
       </div>
     </div>
   </div>
@@ -38,7 +34,7 @@ export default {
    },
   computed: {
     outputHtml: function() {
-      return this.highlightedName;
+      return this.highlightedName + " (" + this.publishedYear + ")";
     },
     shortenedSummary: function() {
       if (this.overview.split(" ").length > this.max_summary_length) {
@@ -48,6 +44,9 @@ export default {
         return this.overview.split(" ").slice(0,this.max_summary_length).join(" ");
       }
       
+    },
+    publishedYear: function() {
+      return this.publishedDate.split("-")[0];
     }
   }
 }
