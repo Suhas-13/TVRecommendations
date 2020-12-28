@@ -64,7 +64,6 @@ export default {
     setShow(show) {
       this.show = show.name;
       this.show_id = show.id;
-      this.modal = false;
     }
   },
   watch: {
