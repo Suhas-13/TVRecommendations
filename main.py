@@ -38,6 +38,19 @@ def get_search():
     response = (jsonify(response))
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-
+@app.route("/generate_recommendation", methods=["POST"])
+def get_recommendation():
+    response = {"response":[]}
+    req = request.get_json()
+    if req.get("show_id_list") and req.get("count"):
+        for show in generate_recommendations(req.get("show_id_list"), int(req.get("count"))):
+            if (show.properties["poster_path"] is None):
+                image_url = "no-image"
+            else:
+                image_url = "http://image.tmdb.org/t/p/w130_and_h195_bestv2" + str(show.properties["poster_path"])
+            response['response'].append({"name":show.show_name, "id":show.properties["id"], "published_date": show.properties["first_air_date"], "overview": show.properties["overview"], "image_url":image_url})
+    response = (jsonify(response))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 if __name__ == '__main__':
     app.run('0.0.0.0',debug=True)

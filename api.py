@@ -71,7 +71,11 @@ def get_best_recommendations(recommendation_list, show_list, count):
     recommendation_scores = [0] * len(recommendation_keywords)
     scores={}
     for recommendation in range(len(recommendation_list)):
-        keyword_score = min(1,(sum((recommendation_keywords[recommendation] & show_keyword_set).values()) / sum(recommendation_keywords[recommendation].values())))
+        keyword_sum = sum(recommendation_keywords[recommendation].values())
+        if (keyword_sum == 0):
+            keyword_score = 0
+        else:
+            keyword_score = min(1,(sum((recommendation_keywords[recommendation] & show_keyword_set).values()) / keyword_sum))
         rating_score = math.sqrt(min(1,(recommendation_list[recommendation].properties["vote_average"] / 10)))
         rating_count_score = min(1, (recommendation_list[recommendation].properties["vote_count"] / max_reviews))
         popularity_score = min(1,((recommendation_list[recommendation].properties["popularity"] / max_popularity_score)))
@@ -88,17 +92,21 @@ def get_best_recommendations(recommendation_list, show_list, count):
         i+=1
     return return_list
     
-def process_show_list(show_list, count):
+def generate_recommendations(input_list, count):
     shows = set()
     show_id_list = set()
-    for show in show_list:
-        new_show = Show(show_name = show)
+    for show_id in input_list:
+        new_show = Show(show_id = show_id)
         shows.add(new_show) 
         show_id_list.add(new_show.properties["id"])
-    genres = get_list_by_attribute(shows, "genre_ids")
+    genre_list = []
+    genres = get_list_by_attribute(shows, "genres")
     genres = list(chain.from_iterable(genres))
+    genre_list = []
+    for genre in genres:
+        genre_list.append(genre['id'])
     genre_frequency = {}
-    for i in genres:
+    for i in genre_list:
         if i in genre_frequency:
             genre_frequency[i]+=1
         else:
@@ -121,7 +129,7 @@ def process_show_list(show_list, count):
         if (current_show.properties['id'] not in show_id_list):
             recommendation_list.add(current_show)
             rec_ids.add(current_show.properties['id'])
-    if (len(show_list) < 8):
+    if (len(input_list) < 8):
         for show in original_shows:
             similar_shows = show.get_similar_shows(2)
             for new_show in similar_shows:

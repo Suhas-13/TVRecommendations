@@ -10,8 +10,8 @@
       <h1 class="text-gray-900 font-bold text-2xl" v-html="outputHtml"></h1>
       <p class="mt-2 text-gray-600 text-sm">{{shortenedSummary}}</p>
       <div class="justify-between mt-3">
-        <button v-if="added == false" @click = "addShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Mark as watched</button>
-        <button v-if="added == true" @click = "removeShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Unmark as watched</button>
+        <button v-if="display_only == false && added == false" @click = "addShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Mark as watched</button>
+        <button v-if="display_only == false && added == true" @click = "removeShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Unmark as watched</button>
       </div>
     </div>
   </div>
@@ -44,6 +44,7 @@ export default {
     name: String,
     highlightedName:  String,
     id: Number,
+    display_only: Boolean,
     overview: String,
     publishedDate: String,
     image_url: String,

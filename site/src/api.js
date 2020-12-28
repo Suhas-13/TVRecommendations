@@ -29,4 +29,20 @@ async function search(query, count) {
         return [];
     }
 }
-export {get_popular_shows, search}
+async function get_recommendations(show_id_list, count) {
+    const data = {"show_id_list":show_id_list, "count":count};
+    const response = await fetch("http://192.168.86.36:5000/generate_recommendation", {method: 'post', headers:{'Accept':'application/json','Content-Type':"application/json"}, body: JSON.stringify(data), mode: 'cors'});
+    const json_response = await response.json();
+    if ("response" in json_response) {
+        let output_list = [];
+        for (let i=0; i<json_response['response'].length; i++) {
+            let show = json_response['response'][i];
+            output_list.push(new Show(show['name'], show['id'], show['overview'], show['published_date'], show["image_url"]))
+        }
+        return output_list;
+    }
+    else {
+        return [];
+    }
+}
+export {get_popular_shows, search, get_recommendations}
