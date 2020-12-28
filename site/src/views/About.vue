@@ -2,17 +2,30 @@
 
 <template>
   <div class="about flex flex-col items-center">
+    <h1>Add shows to the list</h1>
+    <br><br>
     <div @click="modal=false" class ="absolute inset-0 z-0"> </div>
-    <input class = "w-4/12 bg-gray-300 px-4 py-5 z-10"  @focus="modal=true" autocomplete = "off" type = "text" v-model="show">
+    <input placeholder="Search shows" class = "w-4/12 bg-gray-300 px-4 py-5 z-10"  @focus="modal=true" autocomplete = "off" type = "text" v-model="show">
     <div class = "px-0 py-0 h-full flex flex-col items-center z-10" v-if ="show_list && modal">
       <ul class="w-full text-white">
-        <li v-for="(filteredShow, index) in show_list" v-bind:key="index" class="h-full flex flex-col items-center py-1 cursor-pointer" @click = "setShow(show_list[index])">
-          <Show v-bind:name="show_list[index].name" v-bind:publishedDate="show_list[index].publishedDate" v-bind:highlightedName="show_list[index].highlightedName" v-bind:id ="show_list[index].id" v-bind:overview="show_list[index].overview" v-bind:image_url="show_list[index].image_url"></Show>
+        <li v-for="(filteredShow, index) in show_list" v-bind:key="index" class="h-full flex flex-col items-center py-1 cursor-pointer">
+          <Show v-bind:name="show_list[index].name" v-bind:added = "final_id_list.includes(show_list[index].id)" v-bind:publishedDate="show_list[index].publishedDate" v-bind:highlightedName="show_list[index].highlightedName" v-bind:id ="show_list[index].id" v-bind:overview="show_list[index].overview" v-bind:image_url="show_list[index].image_url"></Show>
         </li>
       </ul>
-      </div>     
+    </div>  
+    <div class = "px-0 py-0 h-full flex flex-col items-center z-10" v-if ="modal==false && final_list.length != 0"><br><br><br><br><br><br><br><br><br>Added Show's
+      <ul class="w-full text-white">
+        <li v-for="(filteredShow2, index2) in final_list" v-bind:key="index2" class="h-full flex flex-col items-center py-1 cursor-pointer">
+          <Show v-bind:name="final_list[index2].name" v-bind:added = "final_id_list.includes(final_list[index2].id)" v-bind:publishedDate="final_list[index2].publishedDate" v-bind:highlightedName="final_list[index2].highlightedName" v-bind:id ="final_list[index2].id" v-bind:overview="final_list[index2].overview" v-bind:image_url="final_list[index2].image_url"></Show>
+        </li>
+      </ul>
+      <br><br>
+      <button style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Generate Recommendations</button>
+      <br><br><br><br><br>
+      </div>   
 
   </div>
+  
 
 </template>
 <style>
@@ -30,10 +43,11 @@ export default {
   data: function() {
     return {
       show: '',
-      show_id: '',
       modal: false,
-      maxResults: 5,
+      maxResults: 3,
       show_list: [],
+      final_list: [],
+      final_id_list: []
     }
   },
   mounted() {
@@ -61,9 +75,18 @@ export default {
         }
       }
     },
-    setShow(show) {
-      this.show = show.name;
-      this.show_id = show.id;
+    addShow(show) {
+      this.final_list.push(show);
+      this.final_id_list.push(show.id);
+    },
+    removeShow(show) {
+      for (let i=0; i<this.final_list.length; i++) {
+        if (show.id === this.final_list[i].id) {
+          this.final_list.splice(i,1);
+          this.final_id_list.splice(i,1);
+          break;
+        }
+      }
     }
   },
   watch: {

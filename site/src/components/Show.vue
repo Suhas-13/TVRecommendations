@@ -10,7 +10,8 @@
       <h1 class="text-gray-900 font-bold text-2xl" v-html="outputHtml"></h1>
       <p class="mt-2 text-gray-600 text-sm">{{shortenedSummary}}</p>
       <div class="justify-between mt-3">
-        <button style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Mark as watched</button>
+        <button v-if="added == false" @click = "addShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Mark as watched</button>
+        <button v-if="added == true" @click = "removeShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Unmark as watched</button>
       </div>
     </div>
   </div>
@@ -36,6 +37,7 @@
 </style>
 Show number of episodes, ratings, description, name and image
 <script>
+import {Show} from '../Show.js';
 export default {
   name: 'Show',
   props: {
@@ -44,10 +46,11 @@ export default {
     id: Number,
     overview: String,
     publishedDate: String,
-    image_url: String
+    image_url: String,
+    added: Boolean
   },
   data: function(){
-      return {max_summary_length: 40, no_image_found: require("../assets/no-image-icon.png")}
+      return {max_summary_length: 40, no_image_found: require("../assets/no-image-icon.png")};
    },
   computed: {
     outputHtml: function() {
@@ -65,6 +68,15 @@ export default {
     publishedYear: function() {
       return this.publishedDate.split("-")[0];
     }
+  },
+  methods: {
+    addShow() {
+      this.$parent.addShow(new Show(this.name, this.id, this.overview, this.publishedDate, this.image_url, this.highlightedName));
+    },
+    removeShow() {
+      console.log("test");
+      this.$parent.removeShow(new Show(this.name, this.id, this.overview, this.publishedDate, this.image_url, this.highlightedName));
+    },
   }
 }
 </script>
