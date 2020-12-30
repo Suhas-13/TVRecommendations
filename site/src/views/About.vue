@@ -81,6 +81,8 @@ export default {
           if (show_return[i]['name']) {
             show_return[i].highlightText(this.show);
             this.show_list.push(show_return[i]);
+            console.log(show_return[i]);
+
           }
         }
       }

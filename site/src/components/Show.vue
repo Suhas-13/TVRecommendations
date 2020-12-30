@@ -2,14 +2,13 @@
   
 
   <div class="py-6">
-  <div class="flex max-w-lg bg-white shadow-lg rounded-lg overflow-hidden">
+  <div class="flex flex-wrap max-width-show max-height-show bg-white shadow-lg rounded-lg overflow-hidden">
     <div v-if="image_url !== 'no-image'" class="width-bg-image bg-cover" v-bind:style="{ backgroundImage: 'url(' + image_url + ')' }"> </div> 
     <div v-if="image_url == 'no-image'" class="width-bg-image bg-contain" v-bind:style="{ backgroundImage: 'url(' + no_image_found + ')' }"> </div>
-   
     <div class="width-text p-4">
       <h1 class="text-gray-900 font-bold text-2xl" v-html="outputHtml"></h1>
       <p class="mt-2 text-gray-600 text-sm">{{shortenedSummary}}</p>
-      <div class="justify-between mt-3">
+      <div class="mt-5">
         <button v-if="display_only == false && added == false" @click = "addShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Mark as watched</button>
         <button v-if="display_only == false && added == true" @click = "removeShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Unmark as watched</button>
       </div>
@@ -19,6 +18,14 @@
   
 </template>
 <style>
+  .max-width-show {
+    min-width: 34rem;
+    max-width:34rem;
+  }
+  .max-height-show {
+    min-height: 12rem;
+    max-height: 17rem;
+  }
   .width-bg-image {
     width: 28%;
   }

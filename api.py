@@ -3,6 +3,7 @@ import requests
 import numpy as np
 from Show import Show
 from collections import Counter 
+import time
 from itertools import chain
 from helper import *
 import math
@@ -70,20 +71,36 @@ def get_best_recommendations(recommendation_list, show_list, count):
             keyword_list.update({keyword:len(recommendation_list)})
     recommendation_scores = [0] * len(recommendation_keywords)
     scores={}
+    unique_keyword_scores = set()
+    keyword_score_list = []
     for recommendation in range(len(recommendation_list)):
-        keyword_sum = sum(recommendation_keywords[recommendation].values())
+        keyword_sum = len(recommendation_keywords[recommendation].values())
         if (keyword_sum == 0):
             keyword_score = 0
         else:
             keyword_score = min(1,(sum((recommendation_keywords[recommendation] & show_keyword_set).values()) / keyword_sum))
-        rating_score = math.sqrt(min(1,(recommendation_list[recommendation].properties["vote_average"] / 10)))
+        keyword_score_list.append([keyword_score, recommendation])
+        rating_score = (min(1,(recommendation_list[recommendation].properties["vote_average"] / 10)))
         rating_count_score = min(1, (recommendation_list[recommendation].properties["vote_count"] / max_reviews))
         popularity_score = min(1,((recommendation_list[recommendation].properties["popularity"] / max_popularity_score)))
-        recommendation_scores[recommendation] = (keyword_score * 0.5) + (rating_score*0.25) + (rating_count_score*0.125) + (popularity_score*0.125)
-        scores[recommendation_list[recommendation].show_name] = {"keyword_score":keyword_score,"rating_score":rating_score,"rating_count_score":rating_count_score,"popularity_score":popularity_score, "actual_score": recommendation_scores[recommendation]}
+        recommendation_scores[recommendation] = (rating_score*0.25) + (rating_count_score*0.125) + (popularity_score*0.125)
+        unique_keyword_scores.add(keyword_score)
+        scores[recommendation_list[recommendation].show_name] = {"rating_score":rating_score, "rating_count_score":rating_count_score,"popularity_score":popularity_score, "actual_score": recommendation_scores[recommendation]}
+    maximum_keywords = len(unique_keyword_scores)
+    keyword_score_list = sorted(keyword_score_list)
+    current_position = 1
+    for pos in range(len(keyword_score_list)):
+        if pos != 0:
+            if keyword_score_list[pos][0] != keyword_score_list[pos-1][0]:
+                current_position+=1
+        discretized_score = current_position/maximum_keywords
+        recommendation_scores[keyword_score_list[pos][1]]+=(discretized_score*0.5)
+        scores[recommendation_list[keyword_score_list[pos][1]].show_name]["keyword_score"] = discretized_score
+        scores[recommendation_list[keyword_score_list[pos][1]].show_name]["actual_score"] = recommendation_scores[keyword_score_list[pos][1]]
     return_list = []
     i = 0
     res = {recommendation_list[i].show_name: recommendation_scores[i] for i in range(len(recommendation_scores))} 
+    print(scores)
     while (i<count and len(recommendation_list) != 0):
         index = recommendation_scores.index(max(recommendation_scores))
         return_list.append(recommendation_list[index])
@@ -93,6 +110,8 @@ def get_best_recommendations(recommendation_list, show_list, count):
     return return_list
     
 def generate_recommendations(input_list, count):
+    print(time.time())
+    current_time = time.time()
     shows = set()
     show_id_list = set()
     for show_id in input_list:
@@ -136,7 +155,10 @@ def generate_recommendations(input_list, count):
                 if (new_show.properties["id"] not in rec_ids and new_show.properties["id"] not in show_id_list):
                     shows.add(new_show)
                     show_id_list.add(new_show.properties["id"])
-    return get_best_recommendations(list(recommendation_list), list(shows), count)
+    recommendations = get_best_recommendations(list(recommendation_list), list(shows), count)
+    print(time.time())
+    print(time.time()-current_time)
+    return recommendations
         
 
 def search(query, count):
