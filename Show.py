@@ -2,7 +2,7 @@ API_KEY = open("credentials.txt").read()
 import requests
 from collections import Counter as mset
 import json
-from storage import *
+from storage import is_show_id_saved, get_show_object, save_show_object
 import time
 
 class Show:

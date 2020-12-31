@@ -10,8 +10,11 @@ import math
 import gensim.models.keyedvectors as word2vec
 from collections import Counter as mset
 import json
-from storage import *
+from storage import save_keyword_list, get_stored_similar, is_keyword_saved
 import nltk
+
+global current_time
+current_time = 0
 genre_list = {10759: 'Action & Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family', 10762: 'Kids', 9648: 'Mystery', 10763: 'News', 10764: 'Reality', 10765: 'Sci-Fi & Fantasy', 10766: 'Soap', 10767: 'Talk', 10768: 'War & Politics', 37: 'Western'}
 
 def get_list_by_attribute(show_list, attribute):
@@ -46,14 +49,18 @@ def get_list_of_keywords(show_list):
 def get_similar_keywords(keyword, count):
     keyword_list = []
     i=1
-    while (i<=count):
-        data = requests.get("https://api.themoviedb.org/3/search/keyword?api_key=" +API_KEY + "&query=" + keyword + "&page=1").json()
-        if (len(data) == 0):
-            break
-        for word in data['results']:
-            if (word['name'] != keyword):
-                keyword_list.append(word['name'])
-        i+=1
+    if (is_keyword_saved(keyword)):
+        return get_stored_similar(keyword)
+    else:
+        while (i<=count):
+            data = requests.get("https://api.themoviedb.org/3/search/keyword?api_key=" +API_KEY + "&query=" + keyword + "&page=1").json()
+            if (len(data) == 0):
+                break
+            for word in data['results']:
+                if (word['name'] != keyword):
+                    keyword_list.append(word['name'])
+            i+=1
+    save_keyword_list(keyword, keyword_list)
     return keyword_list
 def get_highest_popularity():
     data = requests.get("https://api.themoviedb.org/3/tv/popular?api_key=" + API_KEY + "&language=en-US&page=1").json()
@@ -62,10 +69,12 @@ def get_highest_popularity():
     else:
         return (1500,3000)
 def get_best_recommendations(recommendation_list, show_list, count):
+    global current_time
     recommendation_keywords = get_list_of_keywords(recommendation_list)
     show_keywords = list(chain.from_iterable(get_list_of_keywords(show_list)))
     max_popularity_score, max_reviews = get_highest_popularity()
     show_keyword_set = mset()
+    print("Finished stage 2 after " + str(time.time()-current_time))
     original_show_list = show_list
     for keyword in show_keywords:
         show_keyword_set.update({keyword})
@@ -75,6 +84,7 @@ def get_best_recommendations(recommendation_list, show_list, count):
     for keyword_list in recommendation_keywords:
         for keyword in keyword_list:
             keyword_list.update({keyword:len(recommendation_list)})
+    print("Finished stage 3 after " + str(time.time()-current_time))
     recommendation_scores = [0] * len(recommendation_keywords)
     scores={}
     unique_keyword_scores = set()
@@ -92,6 +102,7 @@ def get_best_recommendations(recommendation_list, show_list, count):
         recommendation_scores[recommendation] = (rating_score*0.25) + (rating_count_score*0.125) + (popularity_score*0.125)
         unique_keyword_scores.add(keyword_score)
         scores[recommendation_list[recommendation].show_name] = {"rating_score":rating_score, "rating_count_score":rating_count_score,"popularity_score":popularity_score, "actual_score": recommendation_scores[recommendation]}
+    print("Finished stage 4 after " + str(time.time()-current_time))
     maximum_keywords = len(unique_keyword_scores)
     keyword_score_list = sorted(keyword_score_list)
     current_position = 1
@@ -105,6 +116,7 @@ def get_best_recommendations(recommendation_list, show_list, count):
         scores[recommendation_list[keyword_score_list[pos][1]].show_name]["actual_score"] = recommendation_scores[keyword_score_list[pos][1]]
     return_list = []
     i = 0
+    print("Finished stage 5 after " + str(time.time()-current_time))
     res = {recommendation_list[i].show_name: recommendation_scores[i] for i in range(len(recommendation_scores))} 
     while (i<count and len(recommendation_list) != 0):
         index = recommendation_scores.index(max(recommendation_scores))
@@ -112,9 +124,11 @@ def get_best_recommendations(recommendation_list, show_list, count):
         recommendation_scores.pop(index)
         recommendation_list.pop(index)
         i+=1
+    print("Finished stage 6 after " + str(time.time()-current_time))
     return return_list
     
 def generate_recommendations(input_list, count):
+    global current_time
     current_time = time.time()
     shows = set()
     show_id_list = set()
@@ -162,9 +176,9 @@ def generate_recommendations(input_list, count):
                 if (new_show.properties["id"] not in rec_ids and new_show.properties["id"] not in show_id_list):
                     shows.add(new_show)
                     show_id_list.add(new_show.properties["id"])
-    print("Finished preprocessing after " + str(time.time()-current_time))
+    print("Finished stage 1 after " + str(time.time()-current_time))
     recommendations = get_best_recommendations(list(recommendation_list), list(shows), count)
-    print("Finished after " + str(time.time()-current_time))
+    print("Finished final stage after " + str(time.time()-current_time))
     return recommendations
         
 
