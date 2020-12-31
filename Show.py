@@ -2,8 +2,8 @@ API_KEY = open("credentials.txt").read()
 import requests
 from collections import Counter as mset
 import json
+from storage import *
 import time
-show_save = json.load(open("show_save.json","r"))
 
 class Show:
     def __init__(self, show_name = None, show_id = None, properties = None):
@@ -20,16 +20,12 @@ class Show:
             self.found = True
             self.processed=True
             self.show_name = properties["name"]
-            show_save[str(self.show_id)] = self.properties
-            show_save[str(self.show_id)]['added_utc'] = time.time()
-            json.dump(show_save,open("show_save.json","w+"))
         elif show_id:
-            if str(show_id) in show_save:
+            if is_show_id_saved(str(show_id)):
                 #print("Hitting storage")
                 self.show_id = show_id
-                self.properties = show_save[str(self.show_id)]
+                self.properties = get_show_object(str(show_id))
                 self.show_name = self.properties['original_name']
-                print(self.show_name)
                 self.processed = True
                 self.found = True
             else:
@@ -41,11 +37,7 @@ class Show:
                     self.show_id = show_id
                     self.properties = data
                     self.show_name = self.properties['original_name']
-                    print(self.show_name)
                     self.processed=True
-                    show_save[str(show_id)] = self.properties
-                    show_save[str(show_id)]['added_utc'] = time.time()
-                    json.dump(show_save,open("show_save.json","w+"))
                 else:
                     self.processed = False
                     self.found = False
@@ -59,11 +51,10 @@ class Show:
                 self.processed=True
                 self.show_name = self.properties['original_name']
                 self.show_id = self.properties['id']
-                show_save[str(show_id)] = self.properties
-                show_save[str(show_id)]['added_utc'] = time.time()
-                json.dump(show_save,open("show_save.json","w+"))
             else:
                 self.found = False
+        if (self.found and self.processed):
+            save_show_object(self.properties)
 
     def get_recommendations(self, max_recommendations):
         if (self.recommendations):

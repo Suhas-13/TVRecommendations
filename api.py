@@ -9,10 +9,8 @@ from helper import *
 import math
 import gensim.models.keyedvectors as word2vec
 from collections import Counter as mset
-
-from nltk.tokenize import word_tokenize, sent_tokenize
-
-
+import json
+from storage import *
 import nltk
 genre_list = {10759: 'Action & Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family', 10762: 'Kids', 9648: 'Mystery', 10763: 'News', 10764: 'Reality', 10765: 'Sci-Fi & Fantasy', 10766: 'Soap', 10767: 'Talk', 10768: 'War & Politics', 37: 'Western'}
 
