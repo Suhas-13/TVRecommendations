@@ -115,7 +115,6 @@ def get_best_recommendations(recommendation_list, show_list, count):
     return return_list
     
 def generate_recommendations(input_list, count):
-    print(time.time())
     current_time = time.time()
     shows = set()
     show_id_list = set()
@@ -158,14 +157,14 @@ def generate_recommendations(input_list, count):
             rec_ids.add(current_show.properties['id'])
     if (len(input_list) < 8):
         for show in original_shows:
-            similar_shows = show.get_similar_shows(2)
+            similar_shows = show.get_similar_shows(1)
             for new_show in similar_shows:
                 if (new_show.properties["id"] not in rec_ids and new_show.properties["id"] not in show_id_list):
                     shows.add(new_show)
                     show_id_list.add(new_show.properties["id"])
+    print("Finished preprocessing after " + str(time.time()-current_time))
     recommendations = get_best_recommendations(list(recommendation_list), list(shows), count)
-    print(time.time())
-    print(time.time()-current_time)
+    print("Finished after " + str(time.time()-current_time))
     return recommendations
         
 
