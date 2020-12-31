@@ -18,9 +18,17 @@ genre_list = {10759: 'Action & Adventure', 16: 'Animation', 35: 'Comedy', 80: 'C
 
 def get_list_by_attribute(show_list, attribute):
     output_list = []
-    for episode in show_list:
-        if (episode.found):
-            output_list.append(episode.properties[attribute])
+    if attribute == "genres":
+        for episode in show_list:
+            if (episode.found):
+                if "genres" in episode.properties:
+                    output_list.append(episode.properties["genres"])
+                else:
+                    output_list.append(episode.properties["genre_ids"])
+    else:
+        for episode in show_list:
+            if (episode.found):
+                output_list.append(episode.properties[attribute])
     return output_list
 def update_genre_list():
     data = requests.get("https://api.themoviedb.org/3/genre/tv/list?api_key=" + API_KEY + "&language=en-US").json()
@@ -100,7 +108,6 @@ def get_best_recommendations(recommendation_list, show_list, count):
     return_list = []
     i = 0
     res = {recommendation_list[i].show_name: recommendation_scores[i] for i in range(len(recommendation_scores))} 
-    print(scores)
     while (i<count and len(recommendation_list) != 0):
         index = recommendation_scores.index(max(recommendation_scores))
         return_list.append(recommendation_list[index])
@@ -123,7 +130,10 @@ def generate_recommendations(input_list, count):
     genres = list(chain.from_iterable(genres))
     genre_list = []
     for genre in genres:
-        genre_list.append(genre['id'])
+        if isinstance(genre, int):
+            genre_list.append(genre)
+        else:
+            genre_list.append(genre['id'])
     genre_frequency = {}
     for i in genre_list:
         if i in genre_frequency:
@@ -136,15 +146,15 @@ def generate_recommendations(input_list, count):
     rec_names_not_unique = []
     for i in recommendation_list:
         if i.properties["id"] not in show_id_list:
-            rec_names_not_unique.append(i.properties["name"])
-            rec_name_list[i.properties["name"]] = i
+            rec_names_not_unique.append(i.properties["id"])
+            rec_name_list[i.properties["id"]] = i
     occurence_count = Counter(rec_names_not_unique) 
     common_list = occurence_count.most_common(8) 
     recommendation_list = set()
     original_shows = shows.copy()
     rec_ids = set()
     for show in common_list:
-        current_show = Show(show[0])
+        current_show = rec_name_list[show[0]]
         if (current_show.properties['id'] not in show_id_list):
             recommendation_list.add(current_show)
             rec_ids.add(current_show.properties['id'])
@@ -165,11 +175,12 @@ def search(query, count):
     data = requests.get("https://api.themoviedb.org/3/search/tv?api_key="+ API_KEY + "&query=" + query + "&include_adult=true").json()
     show_list = []
     i = 0
-    for show in data['results']:
-        show_list.append(Show(properties = show))
-        if (i==count-1):
-            break
-        i+=1
+    if "results" in data:
+        for show in data['results']:
+            show_list.append(Show(properties = show))
+            if (i==count-1):
+                break
+            i+=1
     return show_list
 
 def get_popular_shows(count):
