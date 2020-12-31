@@ -82,7 +82,6 @@ export default {
       this.$parent.addShow(new Show(this.name, this.id, this.overview, this.publishedDate, this.image_url, this.highlightedName));
     },
     removeShow() {
-      console.log("test");
       this.$parent.removeShow(new Show(this.name, this.id, this.overview, this.publishedDate, this.image_url, this.highlightedName));
     },
   }
