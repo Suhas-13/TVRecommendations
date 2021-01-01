@@ -2,16 +2,20 @@
 
 <template>
   <div class="about flex flex-col items-center">
-    <h1>Add shows to the list</h1>
+    <h1 class = "font-serif text-2xl">Search and add shows that you have enjoyed to the list.</h1>
     <br><br>
     <div v-if="recommendation_generated==false" @click="modal=false" class ="absolute inset-0 z-0"> </div>
     <input placeholder="Search shows" class = "w-4/12 bg-gray-300 px-4 py-5 z-10"  @focus="modal=true; recommendation_generated=false;" autocomplete = "off" type = "text" v-model="show">
+     <br>
     <div class = "px-0 py-0 h-full flex flex-col items-center z-10" v-if ="show_list && modal && recommendation_generated==false">
       <ul class="w-full text-white">
         <li v-for="(filteredShow, index) in show_list" v-bind:key="index" class="h-full flex flex-col items-center py-1 cursor-pointer">
           <ShowComponent v-bind:name="show_list[index].name" v-bind:added = "final_id_list.includes(show_list[index].id)" v-bind:publishedDate="show_list[index].publishedDate" v-bind:highlightedName="show_list[index].highlightedName" v-bind:id ="show_list[index].id" v-bind:overview="show_list[index].overview" v-bind:image_url="show_list[index].image_url"></ShowComponent>
         </li>
       </ul>
+      <br><br><br>
+      <button @click="modal = false" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">View Added Shows</button>
+
     </div>  
     <div class = "px-0 py-0 h-full flex flex-col items-center z-10" v-if ="modal==false && final_list.length != 0 && recommendation_generated==false"><br><br><br><br><br><br><br><br><br>Added Show's
       <ul class="w-full text-white">
@@ -20,7 +24,7 @@
         </li>
       </ul>
       <br><br>
-      <button @click="generateRecommendation()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Generate Recommendations</button>
+      <button v-if="generation_in_progress == false" @click="generateRecommendation()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Generate Recommendations</button>
   </div>
     <div class = "px-0 py-0 h-full flex flex-col items-center z-10" v-if ="modal == false && recommendation_generated==true">
       <br><br>
@@ -57,6 +61,7 @@ export default {
       final_list: [],
       final_id_list: [],
       output_list: [],
+      generation_in_progress: false,
       recommendation_generated: false
     }
   },
@@ -99,9 +104,11 @@ export default {
       }
     },
     async generateRecommendation() {
+      this.generation_in_progress = true;
       this.output_list = await get_recommendations(this.final_id_list, 1);
       
       this.recommendation_generated = true;
+      this.generation_in_progress = false;
 
     }
   },

@@ -9,8 +9,8 @@
       <h1 class="text-gray-900 font-bold text-2xl" v-html="outputHtml"></h1>
       <p class="mt-2 text-gray-600 text-sm">{{shortenedSummary}}</p>
       <div class="mt-5">
-        <button v-if="display_only == false && added == false" @click = "addShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Mark as watched</button>
-        <button v-if="display_only == false && added == true" @click = "removeShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Unmark as watched</button>
+        <button v-if="display_only == false && added == false" @click = "addShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Add Show</button>
+        <button v-if="display_only == false && added == true" @click = "removeShow()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Remove Show</button>
       </div>
     </div>
   </div>
