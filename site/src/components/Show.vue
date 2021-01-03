@@ -58,7 +58,7 @@ export default {
     added: Boolean
   },
   data: function(){
-      return {max_summary_length: 40, no_image_found: require("../assets/no-image-icon.png")};
+      return {max_summary_length: 26, no_image_found: require("../assets/no-image-icon.png")};
    },
   computed: {
     outputHtml: function() {

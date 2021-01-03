@@ -13,11 +13,11 @@
           <ShowComponent v-bind:name="show_list[index].name" v-bind:added = "final_id_list.includes(show_list[index].id)" v-bind:publishedDate="show_list[index].publishedDate" v-bind:highlightedName="show_list[index].highlightedName" v-bind:id ="show_list[index].id" v-bind:overview="show_list[index].overview" v-bind:image_url="show_list[index].image_url"></ShowComponent>
         </li>
       </ul>
-      <br><br><br>
+      <br><br>
       <button @click="modal = false" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">View Added Shows</button>
 
     </div>  
-    <div class = "px-0 py-0 h-full flex flex-col items-center z-10" v-if ="modal==false && final_list.length != 0 && recommendation_generated==false"><br><br><br><br><br><br><br><br><br>Added Show's
+    <div class = "px-0 py-0 h-full flex flex-col items-center z-10" v-if ="modal==false && final_list.length != 0 && recommendation_generated==false"><br><br><b>List of added shows: </b><br>
       <ul class="w-full text-white">
         <li v-for="(filteredShow2, index2) in final_list" v-bind:key="index2" class="h-full flex flex-col items-center py-1 cursor-pointer">
           <ShowComponent v-bind:name="final_list[index2].name" v-bind:added = "final_id_list.includes(final_list[index2].id)" v-bind:publishedDate="final_list[index2].publishedDate" v-bind:highlightedName="final_list[index2].highlightedName" v-bind:id ="final_list[index2].id" v-bind:overview="final_list[index2].overview" v-bind:image_url="final_list[index2].image_url"></ShowComponent>
@@ -25,10 +25,16 @@
       </ul>
       <br><br>
       <button v-if="generation_in_progress == false" @click="generateRecommendation()" style = "justify-content: center;" class="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">Generate Recommendations</button>
+      <hollow-dots-spinner v-if="generation_in_progress == true"
+  :animation-duration="1000"
+  :dot-size="25"
+  :dots-num="4"
+  color="#000000"
+/>
   </div>
     <div class = "px-0 py-0 h-full flex flex-col items-center z-10" v-if ="modal == false && recommendation_generated==true">
       <br><br>
-      <h1> Recommendation(s): </h1>
+      <b> Recommendation: </b>
       <br>
         <ul class="w-full text-white">
           <li v-for="(filteredShow3, index3) in output_list" v-bind:key="index3" class="h-full flex flex-col items-center py-1 cursor-pointer">
@@ -36,6 +42,7 @@
           </li>
         </ul>
       </div>
+      <br><br><br>
   </div>
   
 
@@ -47,10 +54,13 @@
 <script>
 import {get_popular_shows, search, get_recommendations} from '../api.js';
 import ShowComponent from '../components/Show.vue';
+import { HollowDotsSpinner } from 'epic-spinners'
+
 export default {
   name: "About",
   components: {
-    ShowComponent
+    ShowComponent,
+    HollowDotsSpinner
   },
   data: function() {
     return {
@@ -106,7 +116,6 @@ export default {
     async generateRecommendation() {
       this.generation_in_progress = true;
       this.output_list = await get_recommendations(this.final_id_list, 1);
-      
       this.recommendation_generated = true;
       this.generation_in_progress = false;
 
