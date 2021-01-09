@@ -7,7 +7,6 @@ import time
 from itertools import chain
 from helper import *
 import math
-import gensim.models.keyedvectors as word2vec
 from collections import Counter as mset
 import json
 from storage import save_keyword_list, get_stored_similar, is_keyword_saved
