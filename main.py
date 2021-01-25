@@ -50,7 +50,6 @@ def get_search():
 def get_recommendation():
     response = {"response":[]}
     req = request.get_json()
-    print(req)
     if req.get("show_id_list") and req.get("count"):
         output_list = get_processed_list(generate_recommendations(req.get("show_id_list"), int(req.get("count"))))
     response['response'] = output_list
@@ -58,4 +57,4 @@ def get_recommendation():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 if __name__ == '__main__':
-    app.run('0.0.0.0',debug=False)
+    app.run('0.0.0.0',debug=False, port = 5128)

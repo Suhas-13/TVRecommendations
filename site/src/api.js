@@ -1,6 +1,8 @@
 import {Show} from './Show.js';
+const PORT = 5128;
+const BASE_URL = "http://localhost"
 async function get_popular_shows(count) {
-    const response = await fetch("http://192.168.86.36:5000/get-popular-shows?count=" + count, {method: 'GET', mode: 'cors'});
+    const response = await fetch(BASE_URL + ":" + PORT + "/get-popular-shows?count=" + count, {method: 'GET', mode: 'cors'});
     const json_response = await response.json();
     if ("response" in json_response) {
         let output_list = [];
@@ -15,7 +17,7 @@ async function get_popular_shows(count) {
     }
 }
 async function search(query, count) {
-    const response = await fetch("http://192.168.86.36:5000/search?query=" + query + "&count=" + count, {method: 'GET', mode: 'cors'});
+    const response = await fetch(BASE_URL + ":" + PORT + "/search?query=" + query + "&count=" + count, {method: 'GET', mode: 'cors'});
     const json_response = await response.json();
     if ("response" in json_response) {
         let output_list = [];
@@ -31,7 +33,7 @@ async function search(query, count) {
 }
 async function get_recommendations(show_id_list, count) {
     const data = {"show_id_list":show_id_list, "count":count};
-    const response = await fetch("http://192.168.86.36:5000/generate_recommendation", {method: 'post', headers:{'Accept':'application/json','Content-Type':"application/json"}, body: JSON.stringify(data), mode: 'cors'});
+    const response = await fetch(BASE_URL + ":" + PORT + "/generate_recommendation", {method: 'post', headers:{'Accept':'application/json','Content-Type':"application/json"}, body: JSON.stringify(data), mode: 'cors'});
     const json_response = await response.json();
     if ("response" in json_response) {
         let output_list = [];
