@@ -199,7 +199,6 @@ def get_popular_shows(count):
     data = requests.get("https://api.themoviedb.org/3/tv/popular?api_key=" + API_KEY + "&language=en-US&page=1").json()
     show_list = []
     i = 0
-    print(data)
     for show in data['results']:
         show_list.append(Show(properties = show))
         if (i==count-1):

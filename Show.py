@@ -1,4 +1,4 @@
-API_KEY = open("credentials.txt").read()
+API_KEY = str(open("credentials.txt").read()).replace("\n","")
 import requests
 from collections import Counter as mset
 import json
