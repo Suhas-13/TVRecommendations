@@ -1,4 +1,4 @@
-API_KEY = open("credentials.txt").read()
+API_KEY = str(open("credentials.txt").read()).replace("\n","")
 import requests
 import numpy as np
 from Show import Show
@@ -183,6 +183,7 @@ def generate_recommendations(input_list, count):
 
 def search(query, count):
     data = requests.get("https://api.themoviedb.org/3/search/tv?api_key="+ API_KEY + "&query=" + query + "&include_adult=true").json()
+    #print(data)
     show_list = []
     i = 0
     if "results" in data:
@@ -194,9 +195,11 @@ def search(query, count):
     return show_list
 
 def get_popular_shows(count):
+    #print("https://api.themoviedb.org/3/tv/popular?api_key=" + API_KEY + "&language=en-US&page=1")
     data = requests.get("https://api.themoviedb.org/3/tv/popular?api_key=" + API_KEY + "&language=en-US&page=1").json()
     show_list = []
     i = 0
+    print(data)
     for show in data['results']:
         show_list.append(Show(properties = show))
         if (i==count-1):
