@@ -12,7 +12,7 @@ def get_show_object(show_id):
 def save_show_object(data):
     show_save[data['id']] = data
     show_save[data['id']]['added_utc'] = time.time()
-    json.dump(show_save,open("show_save.json","w"))
+    json.dump(show_save.copy(),open("show_save.json","w"))
 
 def is_keyword_saved(keyword):
     return keyword in keyword_save
@@ -23,4 +23,4 @@ def get_stored_similar(keyword):
         return []
 def save_keyword_list(keyword, keyword_list):
     keyword_save[keyword] = {"keyword_list":keyword_list,"added_utc":time.time()}
-    json.dump(keyword_save,open("keyword_save.json","w"))
+    json.dump(keyword_save.copy(),open("keyword_save.json","w"))
