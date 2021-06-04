@@ -14,8 +14,9 @@
     "epic-spinners": "^1.1.0",
     "fetch": "^1.1.0",
     "postcss": "^7.0.35",
-    "tailwindcss": "^2.0.1-compat",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.4",
     "vue": "^2.6.11",
+    "vue-cli": "^2.9.6",
     "vue-router": "^3.2.0"
   },
   "devDependencies": {

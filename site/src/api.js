@@ -1,6 +1,6 @@
 import {Show} from './Show.js';
 const PORT = 5128;
-const BASE_URL = "http://localhost"
+const BASE_URL = "https://recommend.suhas.net/api"
 async function get_popular_shows(count) {
     const response = await fetch(BASE_URL + ":" + PORT + "/get-popular-shows?count=" + count, {method: 'GET', mode: 'cors'});
     const json_response = await response.json();
