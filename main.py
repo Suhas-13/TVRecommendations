@@ -8,6 +8,7 @@ from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 cors = CORS(app)
+#app.config["APPLICATION_ROOT"] = "/api"
 
 def get_processed_list(shows):
     output_list = []
@@ -56,5 +57,5 @@ def get_recommendation():
     response = (jsonify(response))
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-if __name__ == '__main__':
-    app.run('0.0.0.0',debug=False, port = 5128)
+#if __name__ == '__main__':
+ #   app.run('0.0.0.0',debug=False, port = 5812)
